@@ -1,8 +1,17 @@
 {% extends "base.html" %}
+{% block body_class %}overview-page{% endblock %}
 {% block content %}
 
 <div class="position-relative" style="height: 100vh;">
   <h1 class="centered-heading">You ran {{total_km}} kilometers this year</h1>
+
+  <!-- Add a flex container for the button and center it -->
+  <div class="d-flex justify-content-center" style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
+    <form action="{{ url_for('reset_db') }}" method="POST">
+      <button type="submit" class="btn btn-danger btn-lg">Reset Data</button>
+    </form>
+  </div>
+
 </div>
 
 {% endblock %}

@@ -30,5 +30,14 @@ def overview():
     total_km = db.session.query(func.sum(Run.kilometers)).scalar()  # Sum all kilometers
     return render_template('overview.html', total_km=total_km)
 
+@app.route('/reset_db', methods=['POST'])
+def reset_db():
+    # Delete all entries in the Run table
+    db.session.query(Run).delete()
+    db.session.commit()
+
+    return redirect(url_for('overview'))  # Redirect back to the overview page
+
+
 if __name__ == '__main__':
     app.run(debug=True)

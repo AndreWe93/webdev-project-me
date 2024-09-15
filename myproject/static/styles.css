@@ -18,6 +18,12 @@ body {
   text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5);
   box-shadow: inset 0 0 5rem rgba(0, 0, 0, 0.5);
 }
+body.overview-page {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  url('/static/images/running_road_forrest.jpg');
+  background-size: cover;
+  background-position: center;
+}
 
 /* Style for navbar links */
 .navbar-nav .nav-link {

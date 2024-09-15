@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
-<body>
+<body class="{% block body_class %}{% endblock %}">
   <nav class="navbar navbar-expand-lg navbar-light bg-dark">
     <ul class="navbar-nav">
       <li class="nav-item">
