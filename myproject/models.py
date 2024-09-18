@@ -1,4 +1,6 @@
 from myproject import db
+from werkzeug.security import generate_password_hash,check_password_hash
+from flask_login import UserMixin
 
 class Run(db.Model):
 
@@ -12,3 +14,24 @@ class Run(db.Model):
     def __init__(self, kilometers, date):
         self.kilometers = kilometers
         self.date = date
+
+class User(db.Model, UserMixin):
+
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key = True)
+    email = db.Column(db.String(64), unique=True, index=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128))
+
+    def __init__(self, email, username, password):
+        self.email = email
+        self.username = username
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self,password):
+        # https://stackoverflow.com/questions/23432478/flask-generate-password-hash-not-constant-output
+        return check_password_hash(self.password_hash,password)
+
+    def __repr__(self):
+        return f"UserName: {self.username}"
