@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
+      <h1 class="text-center mb-4">Add a new word</h1>
+      <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group mb-3">
+          {{ form.word_spanish.label(class_="form-label") }}
+          {{ form.word_spanish(class_="form-control") }}
+        </div>
+        <div class="form-group mb-3">
+          {{ form.word_german.label(class_="form-label") }}
+          {{ form.word_german(class_="form-control") }}
+        </div>
+
+        <div class="d-grid gap-2">
+          {{ form.submit(class_="btn btn-primary btn-block") }}
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

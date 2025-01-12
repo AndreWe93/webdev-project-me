@@ -39,3 +39,20 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"UserName: {self.username}"
+
+class Dict(db.Model):
+
+    # Create a table in the db
+    __tablename__ = 'words'
+
+    id = db.Column(db.Integer, primary_key = True)
+    word_spanish = db.Column(db.String(64), index=True)
+    word_german = db.Column(db.String(64), index=True)
+    created_at = db.Column(db.DateTime)
+    score = db.Column(db.Integer, default=0)
+
+    def __init__(self, word_spanish, word_german, created_at, score=0):
+        self.word_spanish = word_spanish
+        self.word_german = word_german
+        self.created_at = created_at
+        self.score = score

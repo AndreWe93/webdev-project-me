@@ -1,10 +1,11 @@
 from myproject import app, db
-from flask import render_template, url_for, redirect, flash, request
-from myproject.forms import AddRun, LoginForm, RegistrationForm
-from myproject.models import Run, User
+from flask import render_template, url_for, redirect, flash, request, session
+from myproject.forms import AddRun, LoginForm, RegistrationForm, AddWord, TrainForm
+from myproject.models import Run, User, Dict
 from datetime import datetime
 from sqlalchemy import func
 from flask_login import login_user, current_user, logout_user, login_required
+import random
 
 @app.route('/')
 def index():
@@ -91,6 +92,89 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+@app.route('/add_word', methods=['GET', 'POST'])
+@login_required
+def add_word():
+    form = AddWord()
+
+    if form.validate_on_submit():
+        word_spanish = form.word_spanish.data
+        word_german = form.word_german.data
+        created_at = datetime.now()
+
+        new_word = Dict(word_spanish, word_german, created_at)
+        db.session.add(new_word)
+        db.session.commit()
+
+        return redirect(url_for('dictionary'))
+
+    return render_template('add_word.html',form=form)
+
+@app.route('/dictionary', methods=['GET'])
+@login_required
+def dictionary():
+    words = Dict.query.order_by(Dict.created_at.desc()).all()
+    return render_template('dict.html', words=words)
+
+
+@app.route('/train', methods=['GET', 'POST'])
+@login_required
+def train():
+    # If a word is stored in session, retrieve it, else get the word with the lowest score
+    current_word = None
+
+    # If there's no word in the session, choose the word with the lowest score
+    if 'word_id' not in session:
+        words = Dict.query.order_by(Dict.score, db.func.random()).all()
+        if words:
+            current_word = words[0]  # Get the word with the lowest score
+            session['word_id'] = current_word.id  # Store the current word ID in the session
+        else:
+            flash("No words available for training!", "warning")
+            return redirect(url_for('dictionary'))  # Redirect to dictionary if no words are found
+    else:
+        # If a word is stored in the session, fetch it
+        current_word = Dict.query.get(session['word_id'])
+
+    form = TrainForm()
+
+    if form.validate_on_submit():
+        user_translation = form.translation.data.strip().lower()
+
+        # Check if the user provided the correct translation
+        if user_translation == current_word.word_spanish.lower():
+            # If correct, increment the score in the database
+            current_word.score += 1
+            db.session.commit()  # Save the updated score
+
+            flash("Correct! Well done!", "success")
+            session.pop('word_id')  # Remove the word from the session
+            return redirect(url_for('train'))  # Go to the next word
+        else:
+            flash("Incorrect, please try again.", "danger")
+            # Stay on the same word
+
+    return render_template('training.html', form=form, word=current_word)
+
+
+
+
+
+
+@app.route('/delete_word/<int:word_id>', methods=['POST'])
+@login_required
+def delete_word(word_id):
+    word_to_delete = Dict.query.get_or_404(word_id)
+
+    try:
+        db.session.delete(word_to_delete)
+        db.session.commit()
+        flash('Word deleted successfully!', 'success')
+    except:
+        db.session.rollback()
+        flash('An error occurred while trying to delete the word.', 'danger')
+
+    return redirect(url_for('dictionary'))
 
 
 if __name__ == '__main__':

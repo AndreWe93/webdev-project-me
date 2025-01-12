@@ -30,3 +30,12 @@ class RegistrationForm(FlaskForm):
         # Check if not None for that username!
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Sorry, that username is taken!')
+
+class AddWord(FlaskForm):
+    word_spanish = StringField('Spanish Word', validators=[DataRequired()])
+    word_german = StringField('German Word', validators=[DataRequired()])
+    submit = SubmitField('Save')
+
+class TrainForm(FlaskForm):
+    translation = StringField('Spanische Übersetzung', validators=[DataRequired()])
+    submit = SubmitField('Prüfen')

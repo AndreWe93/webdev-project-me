@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
+      <h1 class="text-center mb-4">Vokabel-Trainer</h1>
+
+      <p class="text-center lead mb-4">
+        <strong>German word:</strong> {{ word.word_german }}
+      </p>
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group mb-3">
+          {{ form.translation.label(class_="form-label") }}
+          {{ form.translation(class_="form-control") }}
+        </div>
+
+        <div class="d-grid gap-2">
+          {{ form.submit(class_="btn btn-primary btn-block") }}
+        </div>
+      </form>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} mt-4 text-center">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+    </div>
+  </div>
+
+{% endblock %}
